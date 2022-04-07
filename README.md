@@ -1,9 +1,11 @@
 # AttoPHP
 
-[![License](https://poser.pugx.org/extendssoftware/atto-php/license)](https://packagist.org/packages/extendssoftware/atto-php)
-[![Latest Stable Version](https://poser.pugx.org/extendssoftware/atto-php/v/stable)](https://packagist.org/packages/extendssoftware/atto-php)
-[![Total Downloads](https://poser.pugx.org/extendssoftware/atto-php/downloads)](https://packagist.org/packages/extendssoftwarr/atto-php)
-[![Build Status](https://img.shields.io/github/workflow/status/extendssoftware/atto-php/build)](https://github.com/extendssoftware/atto-php/blob/main/.github/workflows/%20continuous-integration.yml)
+[![License](http://poser.pugx.org/extendssoftware/atto-php/license)](https://packagist.org/packages/extendssoftware/atto-php)
+[![PHP Version Require](http://poser.pugx.org/extendssoftware/atto-php/require/php)](https://packagist.org/packages/extendssoftware/atto-php)
+[![Latest Stable Version](http://poser.pugx.org/extendssoftware/atto-php/v)](https://packagist.org/packages/extendssoftware/atto-php)
+[![Latest Unstable Version](http://poser.pugx.org/extendssoftware/atto-php/v/unstable)](https://packagist.org/packages/extendssoftware/atto-php)
+[![Total Downloads](http://poser.pugx.org/extendssoftware/atto-php/downloads)](https://packagist.org/packages/extendssoftware/atto-php)
+[![Build Status](https://img.shields.io/github/workflow/status/extendssoftware/atto-php/build)](https://github.com/extendssoftware/atto-php/blob/main/.github/workflows/build.yml)
 
 AttoPHP is a tool based on the [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to configure, route and
 render a website with ease.
