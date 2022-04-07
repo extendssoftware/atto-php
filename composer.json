@@ -1,0 +1,44 @@
+{
+  "name": "extendssoftware/atto-php",
+  "type": "library",
+  "description": "AttoPHP is a tool based on the builder pattern to configure, route and render a website in no time.",
+  "homepage": "https://github.com/extendssoftware/atto-php",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Vincent van Dijk",
+      "email": "vincent@extends.nl",
+      "homepage": "https://www.extends.nl/"
+    }
+  ],
+  "require": {
+    "php": "^7.4 || ^8.0"
+  },
+  "require-dev": {
+    "ext-xdebug": "*",
+    "phpunit/phpunit": "^9.0",
+    "squizlabs/php_codesniffer": "^3.6",
+    "phpstan/phpstan": "^1.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "ExtendsSoftware\\AttoPHP\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ExtendsSoftware\\AttoPHP\\": "test/"
+    }
+  },
+  "scripts": {
+    "test": [
+      "@phpunit",
+      "@phpcs",
+      "@phpstan"
+    ],
+    "phpunit": "phpunit",
+    "phpcs": "phpcs",
+    "phpcbf": "phpcbf",
+    "phpstan": "phpstan"
+  }
+}

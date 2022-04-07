@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="AttoPHP Coding Standard">
+    <description>AttoPHP Coding Standard</description>
+
+    <arg value="p"/>
+    <arg name="colors"/>
+
+    <rule ref="PSR2"/>
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+    <file>src</file>
+    <file>test</file>
+</ruleset>
