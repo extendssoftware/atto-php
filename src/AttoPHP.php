@@ -716,8 +716,7 @@ class AttoPHP implements AttoPHPInterface
      */
     public function render(string $filename, object $newThis = null, bool $buffer = null): ?string
     {
-        $buffer = $buffer ?? true;
-
+        $buffer ??= true;
         $closure = function () use ($filename, $buffer) {
             if ($buffer) {
                 ob_start();
