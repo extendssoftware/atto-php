@@ -665,17 +665,7 @@ class AttoPHP implements AttoPHPInterface
                 $pattern = str_replace('*', '(.*)', (string)$route['pattern']);
 
                 // Translate text inside curly brackets.
-                do {
-                    $pattern = preg_replace_callback(
-                        '~{(?<text>[^{}]+)}~i',
-                        function (array $match) use ($locale): string {
-                            return $this->translate($match['text'], $locale);
-                        },
-                        $pattern ?: '',
-                        -1,
-                        $count
-                    );
-                } while ($count > 0);
+                $pattern = $this->translateTags($pattern, $locale);
 
                 do {
                     // Replace everything inside brackets with an optional regular expression group inside out.
@@ -701,10 +691,7 @@ class AttoPHP implements AttoPHPInterface
                     if ($route['restricted']) {
                         $constraints = [];
                         foreach ($route['constraints']['query'] as $key => $value) {
-                            if (preg_match('~{(?<key>[^{}]+)}~i', $key, $match)) {
-                                $key = $this->translate($match['key'], $locale);
-                            }
-
+                            $key = $this->translateTags($key, $locale);
                             $constraints[$key] = $value;
                         }
 
@@ -1030,5 +1017,27 @@ class AttoPHP implements AttoPHPInterface
 
             return $throwable->getMessage();
         }
+    }
+
+    /**
+     * Translate tags.
+     *
+     * Translate text between curly brackets { and } and remove the brackets.
+     *
+     * @param string      $text   The text with tags to translate.
+     * @param string|null $locale Locale passed to translate method.
+     *
+     * @return string The text with translated tags.
+     */
+    private function translateTags(string $text, string $locale = null): string
+    {
+        $replacement = $text;
+        do {
+            $replacement = preg_replace_callback('~{(?<text>[^{}]+)}~i', function (array $match) use ($locale) {
+                return $this->translate($match['text'], $locale);
+            }, (string)$replacement, -1, $count);
+        } while ($count > 0);
+
+        return $replacement ?: $text;
     }
 }
