@@ -114,6 +114,20 @@ class AttoPHPTest extends TestCase
     }
 
     /**
+     * Test get/set translation.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translation()
+     */
+    public function testTranslation(): void
+    {
+        $atto = new AttoPHP();
+        $this->assertNull($atto->translation());
+
+        $atto->translation(__DIR__ . '/translations/*.php');
+        $this->assertSame(__DIR__ . '/translations/*.php', $atto->translation());
+    }
+
+    /**
      * Test get/set root.
      *
      * @covers \ExtendsSoftware\AttoPHP\AttoPHP::root()
@@ -153,6 +167,20 @@ class AttoPHPTest extends TestCase
 
         $atto->layout(__DIR__ . '/layout.phtml');
         $this->assertSame(__DIR__ . '/layout.phtml', $atto->layout());
+    }
+
+    /**
+     * Test get/set locale.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::locale()
+     */
+    public function testLocale(): void
+    {
+        $atto = new AttoPHP();
+        $this->assertNull($atto->locale());
+
+        $atto->locale('nl-nl');
+        $this->assertSame('nl-nl', $atto->locale());
     }
 
     /**
@@ -1089,6 +1117,59 @@ class AttoPHPTest extends TestCase
                 ], $config);
             })
             ->run('/blog', 'GET');
+    }
+
+    /**
+     * Test run and translate without locale.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::run()
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translate()
+     */
+    public function testRunAndTranslateWithoutLocale(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->run('/', 'GET');
+
+        $this->assertSame('Hello', $atto->translate('Hello'));
+    }
+
+    /**
+     * Test run and translate with global locale.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::run()
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translate()
+     */
+    public function testRunAndTranslateWithGlobalLocale(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->locale('nl-nl')
+            ->translation(__DIR__ . '/translations/*.php')
+            ->run('/', 'GET');
+
+        $this->assertSame('Hallo', $atto->translate('Hello'));
+    }
+
+    /**
+     * Test run and translate with different locale parameters.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::run()
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translate()
+     */
+    public function testRunAndTranslateWithDifferentLocaleParameters(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->run('/', 'GET');
+
+        $this->assertSame('Hello', $atto->translate('Hello'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl-nl'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl-NL'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl_NL'));
     }
 
     /**

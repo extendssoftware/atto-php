@@ -79,6 +79,7 @@ Not that much, but just enough to get your site started:
 - Render PHP templates (layout, view and partial) and scripts
 - Data container
 - Config loading
+- Text translation
 
 In every callback, template and script AttoPHP is the current object ```$this```, so whatever you are doing, you can use
 these features.
@@ -357,15 +358,34 @@ This callback is called when an error occurs. The occurred error is available as
 
 ### 5.6 Config
 
-When a config path pattern is set, files will be loaded before the start callback is called. The PHP method ```glob()```
-is being used for loading the config files and the flag ``` GLOB_BRACE``` is given. Config files must be PHP files,
-return an array and are loaded using ```require```. Directories are ignored and files are merged non-recursive.
+When a config path pattern is set with the ```config``` method files will be loaded before the start callback is called.
+The PHP method ```glob()``` is being used for loading the config files and the flag ``` GLOB_BRACE``` is given. Config
+files must be PHP files, return an array and are loaded using ```require```. Directories are ignored and files are
+merged non-recursive.
+
+### 5.7 Translation
+
+When a translation path pattern is set with the ```translation``` method, files will be loaded before the start callback
+is called. The PHP method ```glob()``` is being used for loading the config files and the flag ``` GLOB_BRACE``` is
+given. Translation files must be PHP files, return an array and are loaded using ```require```. Directories are ignored.
+The filename without the extension will be used as the locale for the loaded file, ```nl-nl.php``` will get the
+locale ```nl-nl```.
+
+Text translation can be done with the ```translate``` method when a locale is set using the ```locale``` method.
+Additionally, a locale can be passed to the ```translate``` method as a parameter which overrules the global locale set
+with the ```locale``` method. It is not required for the global locale or locale parameter to be exact the same as the
+filename. AttoPHP uses the PHP method ```locale_lookup``` to find a matching locale. The loaded locale ```nl``` can be,
+for example, used for the global or provided locale ```nl-be``` or ```nl-nl```.
+
+When there is no locale set or provided, no matching translation found or the text is not found as array key, the
+unaltered text will be returned.
 
 ## 6 Control flow
 
 To get a basic idea of how AttoPHP works the [happy path](https://en.wikipedia.org/wiki/Happy_path) is explained here:
 
 - If set, load config files from config path pattern
+- If set, load translation files from translation path pattern
 - If set, call start callback
     - If truthy return value, return value and stop execution
 - Check request type:

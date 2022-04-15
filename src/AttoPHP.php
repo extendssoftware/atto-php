@@ -63,6 +63,13 @@ class AttoPHP implements AttoPHPInterface
     protected ?string $root = null;
 
     /**
+     * Translation root.
+     *
+     * @var string|null
+     */
+    protected ?string $translation = null;
+
+    /**
      * Filename for view file.
      *
      * @var string|null
@@ -75,6 +82,20 @@ class AttoPHP implements AttoPHPInterface
      * @var string|null
      */
     protected ?string $layout = null;
+
+    /**
+     * Locale for translations.
+     *
+     * @var string|null
+     */
+    protected ?string $locale = null;
+
+    /**
+     * Translations per locale.
+     *
+     * @var array[]
+     */
+    protected array $translations = [];
 
     /**
      * Routes in chronological order.
@@ -226,6 +247,20 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
+    public function translation(string $path = null)
+    {
+        if ($path === null) {
+            return $this->translation;
+        }
+
+        $this->translation = $path;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function root(string $path = null)
     {
         if ($path === null) {
@@ -261,6 +296,20 @@ class AttoPHP implements AttoPHPInterface
         }
 
         $this->layout = $filename;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function locale(string $locale = null)
+    {
+        if ($locale === null) {
+            return $this->locale;
+        }
+
+        $this->locale = $locale;
 
         return $this;
     }
@@ -431,6 +480,21 @@ class AttoPHP implements AttoPHPInterface
             exit;
         }
         // @codeCoverageIgnoreEnd
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function translate(string $text, string $locale = null): string
+    {
+        $locale ??= $this->locale;
+        if (is_string($locale)) {
+            $key = locale_lookup(array_keys($this->translations), $locale);
+
+            return $this->translations[$key][$text] ?? $text;
+        }
+
+        return $text;
     }
 
     /**
@@ -804,6 +868,18 @@ class AttoPHP implements AttoPHPInterface
                     foreach ($filenames as $filename) {
                         if (is_file($filename)) {
                             $config = array_merge($config, require $filename);
+                        }
+                    }
+                }
+            }
+
+            $pattern = $this->translation();
+            if (is_string($pattern)) {
+                $filenames = glob($pattern, GLOB_BRACE);
+                if (is_array($filenames)) {
+                    foreach ($filenames as $filename) {
+                        if (is_file($filename)) {
+                            $this->translations[pathinfo($filename, PATHINFO_FILENAME)] = require $filename;
                         }
                     }
                 }

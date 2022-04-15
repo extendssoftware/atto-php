@@ -76,6 +76,15 @@ interface AttoPHPInterface
     public function config(string $pattern = null);
 
     /**
+     * Get/set translation path.
+     *
+     * @param string|null $path Path to the translation directory.
+     *
+     * @return AttoPHPInterface|string|null The translation path when set, null or AttoPHPInterface for method chaining.
+     */
+    public function translation(string $path = null);
+
+    /**
      * Get/set root template path.
      *
      * @param string|null $path Path to the template directory.
@@ -102,6 +111,15 @@ interface AttoPHPInterface
      * @return AttoPHPInterface|string|null The layout filename when set, null or AttoPHPInterface for method chaining.
      */
     public function layout(string $filename = null);
+
+    /**
+     * Get/set locale.
+     *
+     * @param string|null $locale Locale to set.
+     *
+     * @return AttoPHPInterface|string|null The locale when set, null or AttoPHPInterface for method chaining.
+     */
+    public function locale(string $locale = null);
 
     /**
      * Get/set data from/to the container.
@@ -149,6 +167,16 @@ interface AttoPHPInterface
      * @return void
      */
     public function redirect(string $url, int $status = null, bool $exit = null): void;
+
+    /**
+     * Translate text.
+     *
+     * @param string      $text   Text to translate.
+     * @param string|null $locale Locale to use for translation. AttoPHP will use global locale when null.
+     *
+     * @return string The translated text. If locale or text found, unaltered text will be returned.`
+     */
+    public function translate(string $text, string $locale = null): string;
 
     /**
      * Assemble URL.
