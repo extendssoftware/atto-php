@@ -146,7 +146,9 @@ string parameter ```page``` for route pattern ```/blog?page=``` can be accessed 
 Unmatched query string parameter are available as null value. Only specified query string parameters are accessible.
 
 Parts inside curly brackets ```{``` and ```}``` will be translated before matching occurs. Before the URL
-```/blog/{page}``` will be matched, the part ```{page}``` will be translated to the global or provided locale.
+```/blog/{page}``` will be matched, the part ```{page}``` will be translated to the global or provided locale. This also
+applies to query string parameters. The query string parameter ```?{page}=<\d+>``` will be translated before route
+matching.
 
 #### 5.1.3 Constraints and HTTP methods
 

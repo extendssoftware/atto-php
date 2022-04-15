@@ -702,7 +702,15 @@ class AttoPHP implements AttoPHPInterface
                     // Validate query string when specified in route pattern.
                     parse_str($url['query'] ?? '', $query);
                     if ($route['restricted']) {
-                        $constraints = $route['constraints']['query'];
+                        $constraints = [];
+                        foreach ($route['constraints']['query'] as $key => $value) {
+                            if (preg_match('~{(?<key>[^{}]+)}~i', $key, $match) &&
+                                (is_string($locale) || is_null($locale))) {
+                                $key = $this->translate($match['key'], $locale);
+                            }
+
+                            $constraints[$key] = $value;
+                        }
 
                         foreach ($query as $parameter => $value) {
                             if (!array_key_exists($parameter, $constraints) ||

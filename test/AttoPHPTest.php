@@ -754,6 +754,40 @@ class AttoPHPTest extends TestCase
     }
 
     /**
+     * Test match query string parameter with translation.
+     *
+     * @return void
+     */
+    public function testMatchQueryStringParameterWithTranslation(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog-overview', '/blog?{page}=')
+            ->run('/blog?pagina=3', 'GET');
+
+        $this->assertSame('blog-overview', $atto->route()['name']);
+    }
+
+    /**
+     * Test match query string parameter without translation.
+     *
+     * @return void
+     */
+    public function testMatchQueryStringParameterWithoutTranslation(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog-overview', '/blog?{page}=')
+            ->run('/blog?pagina=3', 'GET', [], 'en-us');
+
+        $this->assertNull($atto->route());
+    }
+
+    /**
      * Test match query string without parameters.
      *
      * @return void
