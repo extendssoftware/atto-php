@@ -332,7 +332,7 @@ class AttoPHP implements AttoPHPInterface
         ];
         $pattern = preg_replace_callback(
             '~^(?<methods>\s*([a-z]+(\s*\|\s*[a-z]+)*)\s*)~i',
-            static function ($match) use (&$methods): string {
+            static function (array $match) use (&$methods): string {
                 $methods = array_map('trim', explode('|', strtoupper($match['methods'])));
 
                 return '';
@@ -344,7 +344,7 @@ class AttoPHP implements AttoPHPInterface
         $path = [];
         $pattern = preg_replace_callback(
             '~:(?<parameter>[a-z]\w*)(<(?<constraint>[^>]+)>)?~i',
-            static function ($match) use (&$path) {
+            static function (array $match) use (&$path) {
                 $parameter = $match['parameter'];
                 $path[$parameter] = $match['constraint'] ?? '[^/]+';
 
@@ -466,7 +466,7 @@ class AttoPHP implements AttoPHPInterface
             // Match optional parts inside out. Match everything inside brackets except an opening or closing bracket.
             $url = preg_replace_callback(
                 '~\[(?<optional>[^\[\]]+)]~',
-                static function ($match) use ($name, &$parameters, $constraints): string {
+                static function (array $match) use ($name, &$parameters, $constraints): string {
                     $optional = $match['optional'];
 
                     // Find all parameters in optional part.
@@ -513,7 +513,7 @@ class AttoPHP implements AttoPHPInterface
         // Find all required parameters.
         $url = preg_replace_callback(
             '~:(?<parameter>[a-z]\w*)~i',
-            static function ($match) use ($name, &$parameters, $constraints): string {
+            static function (array $match) use ($name, &$parameters, $constraints): string {
                 $parameter = $match['parameter'];
                 if (!isset($parameters[$parameter])) {
                     throw new RuntimeException(sprintf(
@@ -610,7 +610,7 @@ class AttoPHP implements AttoPHPInterface
                 $constraints = $route['constraints']['path'];
                 $pattern = preg_replace_callback(
                     '~:(?<parameter>[a-z]\w*)~i',
-                    static function ($match) use ($constraints): string {
+                    static function (array $match) use ($constraints): string {
                         return sprintf('(?<%s>%s)', $match['parameter'], $constraints[$match['parameter']]);
                     },
                     $pattern ?: ''
