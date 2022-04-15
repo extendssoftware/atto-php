@@ -15,8 +15,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Parameter $locale to method assemble() to support route translation.
 - Parameter $locale to method match() to support route translation.
 - Parameter $locale to method run() for testing.
+- Readme section 5.7 with translation support.
 
 ### Changed
+
+- Readme section 5.1.2 with path and query string translation.
 
 ### Deprecated
 
