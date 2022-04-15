@@ -665,20 +665,17 @@ class AttoPHP implements AttoPHPInterface
                 $pattern = str_replace('*', '(.*)', (string)$route['pattern']);
 
                 // Translate text inside curly brackets.
-                $locale ??= $this->locale();
-                if (is_string($locale) || is_null($locale)) {
-                    do {
-                        $pattern = preg_replace_callback(
-                            '~{(?<text>[^{}]+)}~i',
-                            function (array $match) use ($locale): string {
-                                return $this->translate($match['text'], $locale);
-                            },
-                            $pattern ?: '',
-                            -1,
-                            $count
-                        );
-                    } while ($count > 0);
-                }
+                do {
+                    $pattern = preg_replace_callback(
+                        '~{(?<text>[^{}]+)}~i',
+                        function (array $match) use ($locale): string {
+                            return $this->translate($match['text'], $locale);
+                        },
+                        $pattern ?: '',
+                        -1,
+                        $count
+                    );
+                } while ($count > 0);
 
                 do {
                     // Replace everything inside brackets with an optional regular expression group inside out.
@@ -704,8 +701,7 @@ class AttoPHP implements AttoPHPInterface
                     if ($route['restricted']) {
                         $constraints = [];
                         foreach ($route['constraints']['query'] as $key => $value) {
-                            if (preg_match('~{(?<key>[^{}]+)}~i', $key, $match) &&
-                                (is_string($locale) || is_null($locale))) {
+                            if (preg_match('~{(?<key>[^{}]+)}~i', $key, $match)) {
                                 $key = $this->translate($match['key'], $locale);
                             }
 
