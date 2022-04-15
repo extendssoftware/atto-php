@@ -8,7 +8,6 @@ use InvalidArgumentException;
 use ReflectionFunction;
 use RuntimeException;
 use Throwable;
-use function array_fill_keys;
 use function array_filter;
 use function array_key_exists;
 use function array_keys;
@@ -630,7 +629,7 @@ class AttoPHP implements AttoPHPInterface
         $constraints = $route['constraints']['query'];
         foreach ($constraints as $parameter => $constraint) {
             // Remove translation delimiters from parameter to use for constraint.
-            $key = str_replace(['{', '}'], '', $parameter);
+            $key = preg_replace('~^{(.*)}$~', '$1', $parameter);
             if (is_string($key) && isset($parameters[$key])) {
                 $value = (string)$parameters[$key];
                 if (!preg_match('~^' . $constraint . '$~i', $value)) {
@@ -697,27 +696,32 @@ class AttoPHP implements AttoPHPInterface
                     // Validate query string when specified in route pattern.
                     parse_str($url['query'] ?? '', $query);
                     if ($route['restricted']) {
-                        $constraints = [];
-                        foreach ($route['constraints']['query'] as $key => $value) {
-                            $key = $this->translateTags($key, $locale);
-                            $constraints[$key] = $value;
-                        }
+                        $matched = [];
+                        foreach ($route['constraints']['query'] as $key => $constraint) {
+                            // Strip translation tags to get key for matches array.
+                            $stripped = preg_replace('~^{(.*)}$~', '$1', $key);
 
-                        foreach ($query as $parameter => $value) {
-                            if (!array_key_exists($parameter, $constraints) ||
-                                !preg_match('~^' . $constraints[$parameter] . '$~', $value)) {
-                                continue 2;
+                            // Translate key to match query string parameter language.
+                            $translated = $this->translateTags($key, $locale);
+
+                            if (array_key_exists($translated, $query)) {
+                                $value = $query[$translated];
+                                if (!preg_match('~^' . $constraint . '$~', $value)) {
+                                    continue 2;
+                                }
+
+                                $matched[] = $translated;
+                                $route['matches'][$stripped] = $value;
+                            } else {
+                                // No query string parameter found, set as null value.
+                                $route['matches'][$stripped] = null;
                             }
-
-                            $query[$parameter] = trim($value);
                         }
 
-                        // Set null values for unmatched query string parameters.
-                        $route['matches'] = array_merge(
-                            $route['matches'],
-                            array_fill_keys(array_keys($constraints), null),
-                            $query
-                        );
+                        // Do not match this route if there are more query string parameters then specified.
+                        if (count(array_diff(array_keys($query), $matched)) > 0) {
+                            continue;
+                        }
                     }
 
                     return $route;

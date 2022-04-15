@@ -785,6 +785,7 @@ class AttoPHPTest extends TestCase
             ->run('/blog?pagina=3', 'GET');
 
         $this->assertSame('blog-overview', $atto->route()['name']);
+        $this->assertSame(['page' => '3'], $atto->route()['matches']);
     }
 
     /**
