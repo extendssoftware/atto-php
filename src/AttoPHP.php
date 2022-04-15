@@ -487,7 +487,7 @@ class AttoPHP implements AttoPHPInterface
      */
     public function translate(string $text, string $locale = null): string
     {
-        $locale ??= $this->locale;
+        $locale ??= $this->locale();
         if (is_string($locale)) {
             $key = locale_lookup(array_keys($this->translations), $locale);
 
