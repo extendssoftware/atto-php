@@ -500,8 +500,12 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function assemble(string $name = null, array $parameters = null, bool $reuse = null): string
-    {
+    public function assemble(
+        string $name = null,
+        array  $parameters = null,
+        bool   $reuse = null,
+        string $locale = null
+    ): string {
         $route = $this->route($name);
         if (!is_array($route)) {
             if ($name === null) {
@@ -615,6 +619,7 @@ class AttoPHP implements AttoPHPInterface
 
         // Remove asterisk from URL.
         $url = str_replace('*', '', $url ?: '');
+        $url = $this->translateTags($url, $locale);
 
         // Filter null values from query string parameters.
         $parameters = array_filter($parameters, function ($value) {
@@ -624,25 +629,28 @@ class AttoPHP implements AttoPHPInterface
         $query = [];
         $constraints = $route['constraints']['query'];
         foreach ($constraints as $parameter => $constraint) {
-            if (isset($parameters[$parameter])) {
-                $value = (string)$parameters[$parameter];
+            // Remove translation delimiters from parameter to use for constraint.
+            $key = str_replace(['{', '}'], '', $parameter);
+            if (is_string($key) && isset($parameters[$key])) {
+                $value = (string)$parameters[$key];
                 if (!preg_match('~^' . $constraint . '$~i', $value)) {
                     throw new RuntimeException(sprintf(
                         'Value "%s" for query string parameter "%s" is not allowed by constraint "%s" for ' .
                         'route with name "%s". Please give a valid value.',
                         $value,
-                        $parameter,
+                        $key,
                         $constraint,
                         $name
                     ));
                 }
 
+                $parameter = $this->translateTags($parameter, $locale);
                 $query[$parameter] = $value;
             }
         }
 
-        if (is_string($url) && !empty($query)) {
-            $url .= '?' . http_build_query($parameters);
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
         }
 
         return $url;

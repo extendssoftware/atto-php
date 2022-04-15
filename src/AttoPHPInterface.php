@@ -184,19 +184,25 @@ interface AttoPHPInterface
      * @param string|null $name       Name of the route or null for the matched route.
      * @param array|null  $parameters Route parameters for path and query string.
      * @param bool|null   $reuse      Reuse parameters from matched route. Default is true.
+     * @param string|null $locale     Locale to be passed to translate method.
      *
      * @return string Assembled URL for route.
      * @throws Throwable When route with name is not found, when a required parameter for the route is not provided or
      *                   when a constraint fails.
      */
-    public function assemble(string $name = null, array $parameters = null, bool $reuse = null): string;
+    public function assemble(
+        string $name = null,
+        array  $parameters = null,
+        bool   $reuse = null,
+        string $locale = null
+    ): string;
 
     /**
      * Match route for URL path.
      *
      * @param string      $path   URL path to find matching route for.
      * @param string      $method Request method.
-     * @param string|null $locale Locale to use for route translation.
+     * @param string|null $locale Locale to be passed to translate method.
      *
      * @return array|null Matched route or null when no route can be matched.
      */
@@ -241,7 +247,7 @@ interface AttoPHPInterface
      * @param string|null $path      URL path to match. Default is REQUEST_URI from the server environment.
      * @param string|null $method    Request method. Default is REQUEST_METHOD from the server environment.
      * @param array|null  $arguments CLI arguments. Default is argv from the server environment.
-     * @param string|null $locale    Locale to use for route matching.
+     * @param string|null $locale    Locale to be passed to match method.
      *
      * @return string Rendered content. Or the Throwable message on error.
      */

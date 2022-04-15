@@ -398,6 +398,23 @@ class AttoPHPTest extends TestCase
     }
 
     /**
+     * Test assemble translation parameter.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::assemble()
+     */
+    public function testAssembleTranslationParameter(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog', '/blog/{page}/:page<\d+>?{order}=')
+            ->run('/', 'GET');
+
+        $this->assertSame('/blog/pagina/4?sortering=desc', $atto->assemble('blog', ['page' => '4', 'order' => 'desc']));
+    }
+
+    /**
      * Test assemble asterisk route.
      *
      * @covers \ExtendsSoftware\AttoPHP\AttoPHP::assemble()
