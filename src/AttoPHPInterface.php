@@ -194,12 +194,13 @@ interface AttoPHPInterface
     /**
      * Match route for URL path.
      *
-     * @param string $path   URL path to find matching route for.
-     * @param string $method Request method.
+     * @param string      $path   URL path to find matching route for.
+     * @param string      $method Request method.
+     * @param string|null $locale Locale to use for route translation.
      *
      * @return array|null Matched route or null when no route can be matched.
      */
-    public function match(string $path, string $method): ?array;
+    public function match(string $path, string $method, string $locale = null): ?array;
 
     /**
      * Match task for CLI arguments.
@@ -240,8 +241,14 @@ interface AttoPHPInterface
      * @param string|null $path      URL path to match. Default is REQUEST_URI from the server environment.
      * @param string|null $method    Request method. Default is REQUEST_METHOD from the server environment.
      * @param array|null  $arguments CLI arguments. Default is argv from the server environment.
+     * @param string|null $locale    Locale to use for route matching.
      *
      * @return string Rendered content. Or the Throwable message on error.
      */
-    public function run(string $path = null, string $method = null, array $arguments = null): string;
+    public function run(
+        string $path = null,
+        string $method = null,
+        array  $arguments = null,
+        string $locale = null
+    ): string;
 }

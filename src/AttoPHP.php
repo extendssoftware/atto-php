@@ -651,7 +651,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function match(string $path, string $method): ?array
+    public function match(string $path, string $method, string $locale = null): ?array
     {
         $url = parse_url($path);
         if (is_array($url) && isset($url['path'])) {
@@ -663,6 +663,22 @@ class AttoPHP implements AttoPHPInterface
 
                 // Replace asterisk to match a character.
                 $pattern = str_replace('*', '(.*)', (string)$route['pattern']);
+
+                // Translate text inside curly brackets.
+                $locale ??= $this->locale();
+                if (is_string($locale) || is_null($locale)) {
+                    do {
+                        $pattern = preg_replace_callback(
+                            '~{(?<text>[^{}]+)}~i',
+                            function (array $match) use ($locale): string {
+                                return $this->translate($match['text'], $locale);
+                            },
+                            $pattern ?: '',
+                            -1,
+                            $count
+                        );
+                    } while ($count > 0);
+                }
 
                 do {
                     // Replace everything inside brackets with an optional regular expression group inside out.
@@ -856,8 +872,12 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function run(string $path = null, string $method = null, array $arguments = null): string
-    {
+    public function run(
+        string $path = null,
+        string $method = null,
+        array  $arguments = null,
+        string $locale = null
+    ): string {
         try {
             $config = [];
 
@@ -897,7 +917,7 @@ class AttoPHP implements AttoPHPInterface
 
             $render = '';
             if ($path || isset($_SERVER['REQUEST_URI'])) {
-                $route = $this->match($path ?: $_SERVER['REQUEST_URI'], $method ?: $_SERVER['REQUEST_METHOD']);
+                $route = $this->match($path ?: $_SERVER['REQUEST_URI'], $method ?: $_SERVER['REQUEST_METHOD'], $locale);
                 if ($route) {
                     $this->matched = $route;
                     $this->data('atto.route', $route['matches']);

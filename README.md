@@ -145,6 +145,9 @@ Matched query string parameters are also available in the data container prefixe
 string parameter ```page``` for route pattern ```/blog?page=``` can be accessed with path ```atto.route.query```.
 Unmatched query string parameter are available as null value. Only specified query string parameters are accessible.
 
+Parts inside curly brackets ```{``` and ```}``` will be translated before matching occurs. Before the URL
+```/blog/{page}``` will be matched, the part ```{page}``` will be translated to the global or provided locale.
+
 #### 5.1.3 Constraints and HTTP methods
 
 Constraints can be specified for path parameters. A constraint is a

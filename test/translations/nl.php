@@ -2,4 +2,5 @@
 
 return [
     'Hello' => 'Hallo',
+    'page' => 'pagina',
 ];

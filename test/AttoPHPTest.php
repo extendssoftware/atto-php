@@ -688,6 +688,40 @@ class AttoPHPTest extends TestCase
     }
 
     /**
+     * Test match URL path to route with translation match.
+     *
+     * @return void
+     */
+    public function testMatchWithTranslationMatch(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog', '/blog[/{page}/:page]')
+            ->run('/blog/pagina/3', 'GET');
+
+        $this->assertSame('blog', $atto->route()['name']);
+    }
+
+    /**
+     * Test match URL path to route without translation match.
+     *
+     * @return void
+     */
+    public function testMatchWithoutTranslationMatch(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog', '/blog[/{page}/:page]')
+            ->run('/blog/pagina/3', 'GET', [], 'en-us');
+
+        $this->assertNull($atto->route());
+    }
+
+    /**
      * Test match query string parameter with value constraint.
      *
      * @return void
