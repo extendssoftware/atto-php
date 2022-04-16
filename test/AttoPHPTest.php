@@ -14,7 +14,7 @@ use function xdebug_get_headers;
  *
  * @package ExtendsSoftware\AttoPHP
  * @author  Vincent van Dijk <vincent@extends.nl>
- * @version 0.1.0
+ * @version 0.2.0
  * @see     https://github.com/extendssoftware/atto-php
  */
 class AttoPHPTest extends TestCase
@@ -1423,7 +1423,7 @@ class AttoPHPTest extends TestCase
 
         $this->assertSame(
             implode(PHP_EOL, [
-                'AttoPHP Console (version 0.1.0)',
+                'AttoPHP Console (version 0.2.0)',
                 '',
                 'Tasks (command <required> [<optional>]):',
                 ' - process queue <limit>',
@@ -1446,7 +1446,7 @@ class AttoPHPTest extends TestCase
 
         $this->assertSame(
             implode(PHP_EOL, [
-                'AttoPHP Console (version 0.1.0)',
+                'AttoPHP Console (version 0.2.0)',
                 '',
                 'No tasks available.',
                 '',
@@ -1470,7 +1470,7 @@ class AttoPHPTest extends TestCase
 
         $this->assertSame(
             implode(PHP_EOL, [
-                'AttoPHP Console (version 0.1.0)',
+                'AttoPHP Console (version 0.2.0)',
                 '',
                 "\033[31mNo task found for command.\033[0m",
                 '',

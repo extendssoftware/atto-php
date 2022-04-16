@@ -9,6 +9,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.2.0] - 2022-04-16
+
+### Added
+
 - Method translation() to set path for translation files to be loaded.
 - Method translate() to translate text for global or given locale.
 - Method locale() to set global locale.
@@ -21,20 +35,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - Readme section 5.1.2 with path and query string translation.
 
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
-
 ## [0.1.0] - 2022-04-07
 
 ### Added
 
 - Initial commit.
 
-[unreleased]: https://github.com/extendssoftware/atto-php/compare/0.1.0...HEAD
+[unreleased]: https://github.com/extendssoftware/atto-php/compare/0.2.0...HEAD
+
+[0.2.0]: https://github.com/extendssoftware/atto-php/commits/0.2.0
 
 [0.1.0]: https://github.com/extendssoftware/atto-php/commits/0.1.0
