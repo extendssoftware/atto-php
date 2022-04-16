@@ -76,6 +76,15 @@ interface AttoPHPInterface
     public function config(string $pattern = null);
 
     /**
+     * Get/set translation path.
+     *
+     * @param string|null $path Path to the translation directory.
+     *
+     * @return AttoPHPInterface|string|null The translation path when set, null or AttoPHPInterface for method chaining.
+     */
+    public function translation(string $path = null);
+
+    /**
      * Get/set root template path.
      *
      * @param string|null $path Path to the template directory.
@@ -102,6 +111,15 @@ interface AttoPHPInterface
      * @return AttoPHPInterface|string|null The layout filename when set, null or AttoPHPInterface for method chaining.
      */
     public function layout(string $filename = null);
+
+    /**
+     * Get/set locale.
+     *
+     * @param string|null $locale Locale to set.
+     *
+     * @return AttoPHPInterface|string|null The locale when set, null or AttoPHPInterface for method chaining.
+     */
+    public function locale(string $locale = null);
 
     /**
      * Get/set data from/to the container.
@@ -151,27 +169,44 @@ interface AttoPHPInterface
     public function redirect(string $url, int $status = null, bool $exit = null): void;
 
     /**
+     * Translate text.
+     *
+     * @param string      $text   Text to translate.
+     * @param string|null $locale Locale to use for translation. AttoPHP will use global locale when null.
+     *
+     * @return string The translated text. If locale or text found, unaltered text will be returned.`
+     */
+    public function translate(string $text, string $locale = null): string;
+
+    /**
      * Assemble URL.
      *
      * @param string|null $name       Name of the route or null for the matched route.
      * @param array|null  $parameters Route parameters for path and query string.
      * @param bool|null   $reuse      Reuse parameters from matched route. Default is true.
+     * @param string|null $locale     Locale to be passed to translate method.
      *
      * @return string Assembled URL for route.
      * @throws Throwable When route with name is not found, when a required parameter for the route is not provided or
      *                   when a constraint fails.
      */
-    public function assemble(string $name = null, array $parameters = null, bool $reuse = null): string;
+    public function assemble(
+        string $name = null,
+        array  $parameters = null,
+        bool   $reuse = null,
+        string $locale = null
+    ): string;
 
     /**
      * Match route for URL path.
      *
-     * @param string $path   URL path to find matching route for.
-     * @param string $method Request method.
+     * @param string      $path   URL path to find matching route for.
+     * @param string      $method Request method.
+     * @param string|null $locale Locale to be passed to translate method.
      *
      * @return array|null Matched route or null when no route can be matched.
      */
-    public function match(string $path, string $method): ?array;
+    public function match(string $path, string $method, string $locale = null): ?array;
 
     /**
      * Match task for CLI arguments.
@@ -212,8 +247,14 @@ interface AttoPHPInterface
      * @param string|null $path      URL path to match. Default is REQUEST_URI from the server environment.
      * @param string|null $method    Request method. Default is REQUEST_METHOD from the server environment.
      * @param array|null  $arguments CLI arguments. Default is argv from the server environment.
+     * @param string|null $locale    Locale to be passed to match method.
      *
      * @return string Rendered content. Or the Throwable message on error.
      */
-    public function run(string $path = null, string $method = null, array $arguments = null): string;
+    public function run(
+        string $path = null,
+        string $method = null,
+        array  $arguments = null,
+        string $locale = null
+    ): string;
 }

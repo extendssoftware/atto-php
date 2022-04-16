@@ -9,7 +9,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+- Method translation() to set path for translation files to be loaded.
+- Method translate() to translate text for global or given locale.
+- Method locale() to set global locale.
+- Parameter $locale to method assemble() to support route translation.
+- Parameter $locale to method match() to support route translation.
+- Parameter $locale to method run() for testing.
+- Readme section 5.7 with translation support.
+
 ### Changed
+
+- Readme section 5.1.2 with path and query string translation.
 
 ### Deprecated
 

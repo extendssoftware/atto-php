@@ -8,7 +8,6 @@ use InvalidArgumentException;
 use ReflectionFunction;
 use RuntimeException;
 use Throwable;
-use function array_fill_keys;
 use function array_filter;
 use function array_key_exists;
 use function array_keys;
@@ -63,6 +62,13 @@ class AttoPHP implements AttoPHPInterface
     protected ?string $root = null;
 
     /**
+     * Translation root.
+     *
+     * @var string|null
+     */
+    protected ?string $translation = null;
+
+    /**
      * Filename for view file.
      *
      * @var string|null
@@ -75,6 +81,20 @@ class AttoPHP implements AttoPHPInterface
      * @var string|null
      */
     protected ?string $layout = null;
+
+    /**
+     * Locale for translations.
+     *
+     * @var string|null
+     */
+    protected ?string $locale = null;
+
+    /**
+     * Translations per locale.
+     *
+     * @var array[]
+     */
+    protected array $translations = [];
 
     /**
      * Routes in chronological order.
@@ -226,6 +246,20 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
+    public function translation(string $path = null)
+    {
+        if ($path === null) {
+            return $this->translation;
+        }
+
+        $this->translation = $path;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function root(string $path = null)
     {
         if ($path === null) {
@@ -261,6 +295,20 @@ class AttoPHP implements AttoPHPInterface
         }
 
         $this->layout = $filename;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function locale(string $locale = null)
+    {
+        if ($locale === null) {
+            return $this->locale;
+        }
+
+        $this->locale = $locale;
 
         return $this;
     }
@@ -436,8 +484,27 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function assemble(string $name = null, array $parameters = null, bool $reuse = null): string
+    public function translate(string $text, string $locale = null): string
     {
+        $locale ??= $this->locale();
+        if (is_string($locale)) {
+            $key = locale_lookup(array_keys($this->translations), $locale);
+
+            return $this->translations[$key][$text] ?? $text;
+        }
+
+        return $text;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function assemble(
+        string $name = null,
+        array  $parameters = null,
+        bool   $reuse = null,
+        string $locale = null
+    ): string {
         $route = $this->route($name);
         if (!is_array($route)) {
             if ($name === null) {
@@ -551,6 +618,7 @@ class AttoPHP implements AttoPHPInterface
 
         // Remove asterisk from URL.
         $url = str_replace('*', '', $url ?: '');
+        $url = $this->translateTags($url, $locale);
 
         // Filter null values from query string parameters.
         $parameters = array_filter($parameters, function ($value) {
@@ -560,25 +628,28 @@ class AttoPHP implements AttoPHPInterface
         $query = [];
         $constraints = $route['constraints']['query'];
         foreach ($constraints as $parameter => $constraint) {
-            if (isset($parameters[$parameter])) {
-                $value = (string)$parameters[$parameter];
+            // Remove translation delimiters from parameter to use for constraint.
+            $key = preg_replace('~^{(.*)}$~', '$1', $parameter);
+            if (is_string($key) && isset($parameters[$key])) {
+                $value = (string)$parameters[$key];
                 if (!preg_match('~^' . $constraint . '$~i', $value)) {
                     throw new RuntimeException(sprintf(
                         'Value "%s" for query string parameter "%s" is not allowed by constraint "%s" for ' .
                         'route with name "%s". Please give a valid value.',
                         $value,
-                        $parameter,
+                        $key,
                         $constraint,
                         $name
                     ));
                 }
 
+                $parameter = $this->translateTags($parameter, $locale);
                 $query[$parameter] = $value;
             }
         }
 
-        if (is_string($url) && !empty($query)) {
-            $url .= '?' . http_build_query($parameters);
+        if (!empty($query)) {
+            $url .= '?' . http_build_query($query);
         }
 
         return $url;
@@ -587,7 +658,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function match(string $path, string $method): ?array
+    public function match(string $path, string $method, string $locale = null): ?array
     {
         $url = parse_url($path);
         if (is_array($url) && isset($url['path'])) {
@@ -599,6 +670,9 @@ class AttoPHP implements AttoPHPInterface
 
                 // Replace asterisk to match a character.
                 $pattern = str_replace('*', '(.*)', (string)$route['pattern']);
+
+                // Translate text inside curly brackets.
+                $pattern = $this->translateTags($pattern, $locale);
 
                 do {
                     // Replace everything inside brackets with an optional regular expression group inside out.
@@ -622,23 +696,32 @@ class AttoPHP implements AttoPHPInterface
                     // Validate query string when specified in route pattern.
                     parse_str($url['query'] ?? '', $query);
                     if ($route['restricted']) {
-                        $constraints = $route['constraints']['query'];
+                        $matched = [];
+                        foreach ($route['constraints']['query'] as $key => $constraint) {
+                            // Strip translation tags to get key for matches array.
+                            $stripped = preg_replace('~^{(.*)}$~', '$1', $key);
 
-                        foreach ($query as $parameter => $value) {
-                            if (!array_key_exists($parameter, $constraints) ||
-                                !preg_match('~^' . $constraints[$parameter] . '$~', $value)) {
-                                continue 2;
+                            // Translate key to match query string parameter language.
+                            $translated = $this->translateTags($key, $locale);
+
+                            if (array_key_exists($translated, $query)) {
+                                $value = $query[$translated];
+                                if (!preg_match('~^' . $constraint . '$~', $value)) {
+                                    continue 2;
+                                }
+
+                                $matched[] = $translated;
+                                $route['matches'][$stripped] = $value;
+                            } else {
+                                // No query string parameter found, set as null value.
+                                $route['matches'][$stripped] = null;
                             }
-
-                            $query[$parameter] = trim($value);
                         }
 
-                        // Set null values for unmatched query string parameters.
-                        $route['matches'] = array_merge(
-                            $route['matches'],
-                            array_fill_keys(array_keys($constraints), null),
-                            $query
-                        );
+                        // Do not match this route if there are more query string parameters then specified.
+                        if (count(array_diff(array_keys($query), $matched)) > 0) {
+                            continue;
+                        }
                     }
 
                     return $route;
@@ -792,8 +875,12 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function run(string $path = null, string $method = null, array $arguments = null): string
-    {
+    public function run(
+        string $path = null,
+        string $method = null,
+        array  $arguments = null,
+        string $locale = null
+    ): string {
         try {
             $config = [];
 
@@ -804,6 +891,18 @@ class AttoPHP implements AttoPHPInterface
                     foreach ($filenames as $filename) {
                         if (is_file($filename)) {
                             $config = array_merge($config, require $filename);
+                        }
+                    }
+                }
+            }
+
+            $pattern = $this->translation();
+            if (is_string($pattern)) {
+                $filenames = glob($pattern, GLOB_BRACE);
+                if (is_array($filenames)) {
+                    foreach ($filenames as $filename) {
+                        if (is_file($filename)) {
+                            $this->translations[pathinfo($filename, PATHINFO_FILENAME)] = require $filename;
                         }
                     }
                 }
@@ -821,7 +920,7 @@ class AttoPHP implements AttoPHPInterface
 
             $render = '';
             if ($path || isset($_SERVER['REQUEST_URI'])) {
-                $route = $this->match($path ?: $_SERVER['REQUEST_URI'], $method ?: $_SERVER['REQUEST_METHOD']);
+                $route = $this->match($path ?: $_SERVER['REQUEST_URI'], $method ?: $_SERVER['REQUEST_METHOD'], $locale);
                 if ($route) {
                     $this->matched = $route;
                     $this->data('atto.route', $route['matches']);
@@ -930,5 +1029,27 @@ class AttoPHP implements AttoPHPInterface
 
             return $throwable->getMessage();
         }
+    }
+
+    /**
+     * Translate tags.
+     *
+     * Translate text between curly brackets { and } and remove the brackets.
+     *
+     * @param string      $text   The text with tags to translate.
+     * @param string|null $locale Locale passed to translate method.
+     *
+     * @return string The text with translated tags.
+     */
+    private function translateTags(string $text, string $locale = null): string
+    {
+        $replacement = $text;
+        do {
+            $replacement = preg_replace_callback('~{(?<text>[^{}]+)}~i', function (array $match) use ($locale) {
+                return $this->translate($match['text'], $locale);
+            }, (string)$replacement, -1, $count);
+        } while ($count > 0);
+
+        return $replacement ?: $text;
     }
 }

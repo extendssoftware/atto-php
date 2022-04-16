@@ -114,6 +114,20 @@ class AttoPHPTest extends TestCase
     }
 
     /**
+     * Test get/set translation.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translation()
+     */
+    public function testTranslation(): void
+    {
+        $atto = new AttoPHP();
+        $this->assertNull($atto->translation());
+
+        $atto->translation(__DIR__ . '/translations/*.php');
+        $this->assertSame(__DIR__ . '/translations/*.php', $atto->translation());
+    }
+
+    /**
      * Test get/set root.
      *
      * @covers \ExtendsSoftware\AttoPHP\AttoPHP::root()
@@ -153,6 +167,20 @@ class AttoPHPTest extends TestCase
 
         $atto->layout(__DIR__ . '/layout.phtml');
         $this->assertSame(__DIR__ . '/layout.phtml', $atto->layout());
+    }
+
+    /**
+     * Test get/set locale.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::locale()
+     */
+    public function testLocale(): void
+    {
+        $atto = new AttoPHP();
+        $this->assertNull($atto->locale());
+
+        $atto->locale('nl-nl');
+        $this->assertSame('nl-nl', $atto->locale());
     }
 
     /**
@@ -367,6 +395,23 @@ class AttoPHPTest extends TestCase
         $atto->route('blog', '/blog/:page<\d+>');
 
         $this->assertSame('/blog/4', $atto->assemble('blog', ['page' => '4']));
+    }
+
+    /**
+     * Test assemble translation parameter.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::assemble()
+     */
+    public function testAssembleTranslationParameter(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog', '/blog/{page}/:page<\d+>?{order}=')
+            ->run('/', 'GET');
+
+        $this->assertSame('/blog/pagina/4?sortering=desc', $atto->assemble('blog', ['page' => '4', 'order' => 'desc']));
     }
 
     /**
@@ -660,6 +705,40 @@ class AttoPHPTest extends TestCase
     }
 
     /**
+     * Test match URL path to route with translation match.
+     *
+     * @return void
+     */
+    public function testMatchWithTranslationMatch(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog', '/blog[/{page}/:page]')
+            ->run('/blog/pagina/3', 'GET');
+
+        $this->assertSame('blog', $atto->route()['name']);
+    }
+
+    /**
+     * Test match URL path to route without translation match.
+     *
+     * @return void
+     */
+    public function testMatchWithoutTranslationMatch(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog', '/blog[/{page}/:page]')
+            ->run('/blog/pagina/3', 'GET', [], 'en-us');
+
+        $this->assertNull($atto->route());
+    }
+
+    /**
      * Test match query string parameter with value constraint.
      *
      * @return void
@@ -689,6 +768,41 @@ class AttoPHPTest extends TestCase
         $this->assertSame('blog-overview', $atto->match('/blog?page=a', 'GET')['name']);
         $this->assertSame('blog-overview', $atto->match('/blog?page=', 'GET')['name']);
         $this->assertSame('blog-overview', $atto->match('/blog?page', 'GET')['name']);
+    }
+
+    /**
+     * Test match query string parameter with translation.
+     *
+     * @return void
+     */
+    public function testMatchQueryStringParameterWithTranslation(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog-overview', '/blog?{page}=')
+            ->run('/blog?pagina=3', 'GET');
+
+        $this->assertSame('blog-overview', $atto->route()['name']);
+        $this->assertSame(['page' => '3'], $atto->route()['matches']);
+    }
+
+    /**
+     * Test match query string parameter without translation.
+     *
+     * @return void
+     */
+    public function testMatchQueryStringParameterWithoutTranslation(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->locale('nl-nl')
+            ->route('blog-overview', '/blog?{page}=')
+            ->run('/blog?pagina=3', 'GET', [], 'en-us');
+
+        $this->assertNull($atto->route());
     }
 
     /**
@@ -1089,6 +1203,59 @@ class AttoPHPTest extends TestCase
                 ], $config);
             })
             ->run('/blog', 'GET');
+    }
+
+    /**
+     * Test run and translate without locale.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::run()
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translate()
+     */
+    public function testRunAndTranslateWithoutLocale(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->run('/', 'GET');
+
+        $this->assertSame('Hello', $atto->translate('Hello'));
+    }
+
+    /**
+     * Test run and translate with global locale.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::run()
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translate()
+     */
+    public function testRunAndTranslateWithGlobalLocale(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->locale('nl-nl')
+            ->translation(__DIR__ . '/translations/*.php')
+            ->run('/', 'GET');
+
+        $this->assertSame('Hallo', $atto->translate('Hello'));
+    }
+
+    /**
+     * Test run and translate with different locale parameters.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::run()
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translate()
+     */
+    public function testRunAndTranslateWithDifferentLocaleParameters(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->run('/', 'GET');
+
+        $this->assertSame('Hello', $atto->translate('Hello'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl-nl'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl-NL'));
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl_NL'));
     }
 
     /**
