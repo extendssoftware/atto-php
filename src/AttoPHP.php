@@ -621,9 +621,7 @@ class AttoPHP implements AttoPHPInterface
         $url = $this->translateTags($url, $locale);
 
         // Filter null values from query string parameters.
-        $parameters = array_filter($parameters, function ($value) {
-            return $value !== null;
-        });
+        $parameters = array_filter($parameters, fn($value): bool => $value !== null);
 
         $query = [];
         $constraints = $route['constraints']['query'];
@@ -684,9 +682,7 @@ class AttoPHP implements AttoPHPInterface
                 $constraints = $route['constraints']['path'];
                 $pattern = preg_replace_callback(
                     '~:(?<parameter>[a-z]\w*)~i',
-                    static function (array $match) use ($constraints): string {
-                        return sprintf('(?<%s>%s)', $match['parameter'], $constraints[$match['parameter']]);
-                    },
+                    fn($match): string => sprintf('(?<%s>%s)', $match['parameter'], $constraints[$match['parameter']]),
                     $pattern ?: ''
                 );
 
@@ -1045,9 +1041,13 @@ class AttoPHP implements AttoPHPInterface
     {
         $replacement = $text;
         do {
-            $replacement = preg_replace_callback('~{(?<text>[^{}]+)}~i', function (array $match) use ($locale) {
-                return $this->translate($match['text'], $locale);
-            }, (string)$replacement, -1, $count);
+            $replacement = preg_replace_callback(
+                '~{(?<text>[^{}]+)}~i',
+                fn(array $match): string => $this->translate($match['text'], $locale),
+                (string)$replacement,
+                -1,
+                $count
+            );
         } while ($count > 0);
 
         return $replacement ?: $text;
