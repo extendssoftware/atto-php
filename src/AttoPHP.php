@@ -322,7 +322,7 @@ class AttoPHP implements AttoPHPInterface
             return $this->data;
         }
 
-        if (!preg_match('~^(?<path>([a-z0-9]+)((?:\.([a-z0-9]+))*))$~i', $path, $matches)) {
+        if (!preg_match('~^(?<path>([a-z\d]+)((?:\.([a-z\d]+))*))$~i', $path, $matches)) {
             throw new InvalidArgumentException(sprintf('Path "%s" is not a valid dot notation. Please fix the ' .
                 'notation. The colon (:), dot (.) and slash (/) characters can be used as separator. The can be used ' .
                 'interchangeably. The characters between the separator can only consist of a-z and 0-9, case ' .
