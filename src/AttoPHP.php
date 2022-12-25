@@ -162,7 +162,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function start(Closure $callback = null)
+    public function start(Closure $callback = null): Closure|static|null
     {
         if ($callback === null) {
             return $this->start;
@@ -176,7 +176,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function before(Closure $callback = null)
+    public function before(Closure $callback = null): Closure|static|null
     {
         if ($callback === null) {
             return $this->before;
@@ -190,7 +190,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function after(Closure $callback = null)
+    public function after(Closure $callback = null): Closure|static|null
     {
         if ($callback === null) {
             return $this->after;
@@ -204,7 +204,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function finish(Closure $callback = null)
+    public function finish(Closure $callback = null): Closure|static|null
     {
         if ($callback === null) {
             return $this->finish;
@@ -218,7 +218,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function error(Closure $callback = null)
+    public function error(Closure $callback = null): Closure|static|null
     {
         if ($callback === null) {
             return $this->error;
@@ -232,7 +232,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function config(string $pattern = null)
+    public function config(string $pattern = null): string|static|null
     {
         if ($pattern === null) {
             return $this->config;
@@ -246,7 +246,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function translation(string $path = null)
+    public function translation(string $path = null): string|static|null
     {
         if ($path === null) {
             return $this->translation;
@@ -260,7 +260,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function root(string $path = null)
+    public function root(string $path = null): string|static|null
     {
         if ($path === null) {
             return $this->root;
@@ -274,7 +274,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function view(string $filename = null)
+    public function view(string $filename = null): string|static|null
     {
         if ($filename === null) {
             return $this->view;
@@ -288,7 +288,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function layout(string $filename = null)
+    public function layout(string $filename = null): string|static|null
     {
         if ($filename === null) {
             return $this->layout;
@@ -302,7 +302,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function locale(string $locale = null)
+    public function locale(string $locale = null): string|static|null
     {
         if ($locale === null) {
             return $this->locale;
@@ -316,7 +316,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function data(string $path = null, $value = null)
+    public function data(string $path = null, mixed $value = null): mixed
     {
         if ($path === null) {
             return $this->data;
@@ -364,8 +364,12 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function route(string $name = null, string $pattern = null, string $view = null, Closure $callback = null)
-    {
+    public function route(
+        string  $name = null,
+        string  $pattern = null,
+        string  $view = null,
+        Closure $callback = null
+    ): AttoPHPInterface|array|null {
         if ($name === null) {
             return $this->matched;
         }
@@ -447,8 +451,12 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function task(string $name, string $command = null, string $script = null, Closure $callback = null)
-    {
+    public function task(
+        string  $name,
+        string  $command = null,
+        string  $script = null,
+        Closure $callback = null
+    ): AttoPHPInterface|array|null {
         if ($command === null) {
             return $this->tasks[$name] ?? null;
         }
@@ -696,21 +704,22 @@ class AttoPHP implements AttoPHPInterface
                         foreach ($route['constraints']['query'] as $key => $constraint) {
                             // Strip translation tags to get key for matches array.
                             $stripped = preg_replace('~^{(.*)}$~', '$1', $key);
+                            if (is_string($stripped)) {
+                                // Translate key to match query string parameter language.
+                                $translated = $this->translateTags($key, $locale);
 
-                            // Translate key to match query string parameter language.
-                            $translated = $this->translateTags($key, $locale);
+                                if (array_key_exists($translated, $query)) {
+                                    $value = $query[$translated];
+                                    if (is_string($value) && !preg_match('~^' . $constraint . '$~', $value)) {
+                                        continue 2;
+                                    }
 
-                            if (array_key_exists($translated, $query)) {
-                                $value = $query[$translated];
-                                if (!preg_match('~^' . $constraint . '$~', $value)) {
-                                    continue 2;
+                                    $matched[] = $translated;
+                                    $route['matches'][$stripped] = $value;
+                                } else {
+                                    // No query string parameter found, set as null value.
+                                    $route['matches'][$stripped] = null;
                                 }
-
-                                $matched[] = $translated;
-                                $route['matches'][$stripped] = $value;
-                            } else {
-                                // No query string parameter found, set as null value.
-                                $route['matches'][$stripped] = null;
                             }
                         }
 
@@ -841,7 +850,7 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function call(Closure $callback, object $newThis, array $arguments = null)
+    public function call(Closure $callback, object $newThis, array $arguments = null): mixed
     {
         $reflection = new ReflectionFunction($callback);
         foreach ($reflection->getParameters() as $parameter) {

@@ -28,7 +28,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|Closure|null The callback when found, null or AttoPHPInterface for method chaining.
      */
-    public function start(Closure $callback = null);
+    public function start(Closure $callback = null): AttoPHPInterface|Closure|null;
 
     /**
      * Get/set before callback.
@@ -37,7 +37,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|Closure|null The callback when found, null or AttoPHPInterface for method chaining.
      */
-    public function before(Closure $callback = null);
+    public function before(Closure $callback = null): AttoPHPInterface|Closure|null;
 
     /**
      * Get/set after callback.
@@ -46,7 +46,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|Closure|null The callback when found, null or AttoPHPInterface for method chaining.
      */
-    public function after(Closure $callback = null);
+    public function after(Closure $callback = null): AttoPHPInterface|Closure|null;
 
     /**
      * Get/set finish callback.
@@ -55,7 +55,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|Closure|null The callback when found, null or AttoPHPInterface for method chaining.
      */
-    public function finish(Closure $callback = null);
+    public function finish(Closure $callback = null): AttoPHPInterface|Closure|null;
 
     /**
      * Get/set error callback.
@@ -64,7 +64,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|Closure|null The callback when found, null or AttoPHPInterface for method chaining.
      */
-    public function error(Closure $callback = null);
+    public function error(Closure $callback = null): AttoPHPInterface|Closure|null;
 
     /**
      * Get/set config path pattern.
@@ -73,7 +73,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|string|null The config pattern when set, null or AttoPHPInterface for method chaining.
      */
-    public function config(string $pattern = null);
+    public function config(string $pattern = null): AttoPHPInterface|string|null;
 
     /**
      * Get/set translation path.
@@ -82,7 +82,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|string|null The translation path when set, null or AttoPHPInterface for method chaining.
      */
-    public function translation(string $path = null);
+    public function translation(string $path = null): AttoPHPInterface|string|null;
 
     /**
      * Get/set root template path.
@@ -92,7 +92,7 @@ interface AttoPHPInterface
      * @return AttoPHPInterface|string|null The root template path when set, null or AttoPHPInterface for method
      *                                      chaining.
      */
-    public function root(string $path = null);
+    public function root(string $path = null): AttoPHPInterface|string|null;
 
     /**
      * Get/set view file.
@@ -101,7 +101,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|string|null The view filename when set, null or AttoPHPInterface for method chaining.
      */
-    public function view(string $filename = null);
+    public function view(string $filename = null): AttoPHPInterface|string|null;
 
     /**
      * Get/set layout file.
@@ -110,7 +110,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|string|null The layout filename when set, null or AttoPHPInterface for method chaining.
      */
-    public function layout(string $filename = null);
+    public function layout(string $filename = null): AttoPHPInterface|string|null;
 
     /**
      * Get/set locale.
@@ -119,7 +119,7 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|string|null The locale when set, null or AttoPHPInterface for method chaining.
      */
-    public function locale(string $locale = null);
+    public function locale(string $locale = null): AttoPHPInterface|string|null;
 
     /**
      * Get/set data from/to the container.
@@ -131,7 +131,7 @@ interface AttoPHPInterface
      *                                     chaining.
      * @throws InvalidArgumentException When path dot notation is wrong.
      */
-    public function data(string $path = null, $value = null);
+    public function data(string $path = null, mixed $value = null): mixed;
 
     /**
      * Get/set HTTP route.
@@ -143,7 +143,12 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|array|null The route when found, null or AttoPHPInterface for method chaining.
      */
-    public function route(string $name = null, string $pattern = null, string $view = null, Closure $callback = null);
+    public function route(
+        string $name = null,
+        string $pattern = null,
+        string $view = null,
+        Closure $callback = null
+    ): AttoPHPInterface|array|null;
 
     /**
      * Get/set console task.
@@ -155,7 +160,12 @@ interface AttoPHPInterface
      *
      * @return AttoPHPInterface|array|null The task when found, null or AttoPHPInterface for method chaining.
      */
-    public function task(string $name, string $command = null, string $script = null, Closure $callback = null);
+    public function task(
+        string  $name,
+        string  $command = null,
+        string  $script = null,
+        Closure $callback = null
+    ): AttoPHPInterface|array|null;
 
     /**
      * Redirect to URL.
@@ -239,7 +249,7 @@ interface AttoPHPInterface
      * @return mixed Result of the callback.
      * @throws Throwable When callback reflection fails or a required argument is missing.
      */
-    public function call(Closure $callback, object $newThis, array $arguments = null);
+    public function call(Closure $callback, object $newThis, array $arguments = null): mixed;
 
     /**
      * Run AttoPHP in four steps.
