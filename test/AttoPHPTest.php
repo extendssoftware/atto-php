@@ -732,7 +732,7 @@ class AttoPHPTest extends TestCase
         $atto
             ->translation(__DIR__ . '/translations/*.php')
             ->locale('nl-nl')
-            ->route('blog', '/blog[/{page}/:page]')
+            ->route('blog', '/blog[/{pages}/:page]')
             ->run('/blog/pagina/3', 'GET', [], 'en-us');
 
         $this->assertNull($atto->route());
@@ -799,7 +799,7 @@ class AttoPHPTest extends TestCase
         $atto
             ->translation(__DIR__ . '/translations/*.php')
             ->locale('nl-nl')
-            ->route('blog-overview', '/blog?{page}=')
+            ->route('blog-overview', '/blog?{pages}=')
             ->run('/blog?pagina=3', 'GET', [], 'en-us');
 
         $this->assertNull($atto->route());
@@ -1236,6 +1236,25 @@ class AttoPHPTest extends TestCase
             ->run('/', 'GET');
 
         $this->assertSame('Hallo', $atto->translate('Hello'));
+    }
+
+    /**
+     * Test run and translate while finding the best locale match.
+     *
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::run()
+     * @covers \ExtendsSoftware\AttoPHP\AttoPHP::translate()
+     */
+    public function testRunAndTranslateWithFallbackLocale(): void
+    {
+        $atto = new AttoPHP();
+        $atto
+            ->translation(__DIR__ . '/translations/*.php')
+            ->run('/', 'GET');
+
+        $this->assertSame('Doei', $atto->translate('Bye', 'nl-be')); // In nl-be translation.
+        $this->assertSame('Hallo', $atto->translate('Hello', 'nl-be')); // In nl translation.
+        $this->assertSame('Bienvenue', $atto->translate('Welcome', 'fr-be')); // In fr-be translation.
+        $this->assertSame('Hello', $atto->translate('Hello', 'fr-be')); // No matching translation.
     }
 
     /**

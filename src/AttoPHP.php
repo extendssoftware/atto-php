@@ -14,6 +14,7 @@ use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
+use function array_search;
 use function array_slice;
 use function count;
 use function explode;
@@ -23,7 +24,9 @@ use function http_build_query;
 use function in_array;
 use function is_array;
 use function is_file;
+use function is_int;
 use function is_string;
+use function locale_canonicalize;
 use function locale_lookup;
 use function ob_end_clean;
 use function ob_get_clean;
@@ -40,6 +43,7 @@ use function preg_split;
 use function sprintf;
 use function str_replace;
 use function strtok;
+use function strtolower;
 use function strtoupper;
 use function trim;
 
@@ -502,9 +506,22 @@ class AttoPHP implements AttoPHPInterface
     {
         $locale ??= $this->locale();
         if (is_string($locale)) {
-            $key = locale_lookup(array_keys($this->translations), $locale);
+            $keys = array_keys($this->translations);
+            while ($key = locale_lookup($keys, $locale, true)) {
+                if (is_string($key)) {
+                    $key = strtolower($key);
+                    if (isset($this->translations[$key][$text])) {
+                        return $this->translations[$key][$text];
+                    }
 
-            return $this->translations[$key][$text] ?? $text;
+                    $position = array_search($key, $keys);
+                    if (is_int($position)) {
+                        unset($keys[array_search($key, $keys)]);
+                    }
+                }
+            }
+
+            return $text;
         }
 
         return $text;
@@ -913,7 +930,10 @@ class AttoPHP implements AttoPHPInterface
                 if (is_array($filenames)) {
                     foreach ($filenames as $filename) {
                         if (is_file($filename)) {
-                            $this->translations[pathinfo($filename, PATHINFO_FILENAME)] = require $filename;
+                            $locale = locale_canonicalize(pathinfo($filename, PATHINFO_FILENAME));
+                            if (is_string($locale)) {
+                                $this->translations[strtolower($locale)] = require $filename;
+                            }
                         }
                     }
                 }

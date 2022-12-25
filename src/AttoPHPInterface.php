@@ -144,9 +144,9 @@ interface AttoPHPInterface
      * @return AttoPHPInterface|array|null The route when found, null or AttoPHPInterface for method chaining.
      */
     public function route(
-        string $name = null,
-        string $pattern = null,
-        string $view = null,
+        string  $name = null,
+        string  $pattern = null,
+        string  $view = null,
         Closure $callback = null
     ): AttoPHPInterface|array|null;
 
@@ -180,6 +180,8 @@ interface AttoPHPInterface
 
     /**
      * Translate text.
+     *
+     * AttoPHP will keep searching for best matching locale and translated text.
      *
      * @param string      $text   Text to translate.
      * @param string|null $locale Locale to use for translation. AttoPHP will use global locale when null.
