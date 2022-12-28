@@ -11,12 +11,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Changed
 
-- Bumped PHP to version 8.1 or higher.
-- Added missing function imports.
-- Method translate() will keep searching for best matching locale and translated text.
-- Added locale to redirect method to translate URL.
-- Removed exit parameter from redirect method interface to discourage non-exit redirect.
-
 ### Deprecated
 
 ### Removed
@@ -24,6 +18,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Fixed
 
 ### Security
+
+## [0.3.0] - 2022-12-28
+
+### Changed
+
+- Bumped PHP to version 8.1 or higher.
+- Added missing function imports.
+- Method translate() will keep searching for best matching locale and translated text.
+- Added locale to redirect method to translate URL.
+- Removed exit parameter from redirect method interface to discourage non-exit redirect.
 
 ## [0.2.0] - 2022-04-16
 
@@ -47,7 +51,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - Initial commit.
 
-[unreleased]: https://github.com/extendssoftware/atto-php/compare/0.2.0...HEAD
+[unreleased]: https://github.com/extendssoftware/atto-php/compare/0.3.0...HEAD
+
+[0.3.0]: https://github.com/extendssoftware/atto-php/commits/0.3.0
 
 [0.2.0]: https://github.com/extendssoftware/atto-php/commits/0.2.0
 
