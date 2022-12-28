@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Added missing function imports.
 - Method translate() will keep searching for best matching locale and translated text.
 - Added locale to redirect method to translate URL.
+- Removed exit parameter from redirect method interface to discourage non-exit redirect.
 
 ### Deprecated
 
