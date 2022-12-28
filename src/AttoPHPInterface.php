@@ -170,13 +170,14 @@ interface AttoPHPInterface
     /**
      * Redirect to URL.
      *
-     * @param string    $url    URL to redirect to.
-     * @param int|null  $status HTTP status code to use. Default is 301.
-     * @param bool|null $exit   Clear output buffers and terminate script, default is true.
+     * @param string      $url    URL to redirect to.
+     * @param int|null    $status HTTP status code to use. Default is 301.
+     * @param string|null $locale The locale to use for translating the redirect URL.
+     * @param bool|null   $exit   Clear output buffers and terminate script, default is true.
      *
      * @return void
      */
-    public function redirect(string $url, int $status = null, bool $exit = null): void;
+    public function redirect(string $url, int $status = null, string $locale = null, bool $exit = null): void;
 
     /**
      * Translate text.

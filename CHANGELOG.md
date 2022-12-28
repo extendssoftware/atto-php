@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Bumped PHP to version 8.1 or higher.
 - Added missing function imports.
 - Method translate() will keep searching for best matching locale and translated text.
+- Added locale to redirect method to translate URL.
 
 ### Deprecated
 

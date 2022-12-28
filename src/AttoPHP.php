@@ -484,9 +484,9 @@ class AttoPHP implements AttoPHPInterface
     /**
      * @inheritDoc
      */
-    public function redirect(string $url, int $status = null, bool $exit = null): void
+    public function redirect(string $url, int $status = null, string $locale = null, bool $exit = null): void
     {
-        header('Location: ' . $url, true, $status ?: 301);
+        header('Location: ' . $this->translateTags($url, $locale), true, $status ?: 301);
 
         // @codeCoverageIgnoreStart
         if ($exit ?? true) {

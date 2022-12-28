@@ -328,7 +328,7 @@ class AttoPHPTest extends TestCase
     }
 
     /**
-     * Test redirect to URL.
+     * Test redirect to URL with translation.
      *
      * @runInSeparateProcess
      * @covers \ExtendsSoftware\AttoPHP\AttoPHP::redirect()
@@ -336,9 +336,16 @@ class AttoPHPTest extends TestCase
     public function testRedirectToUrl(): void
     {
         $atto = new AttoPHP();
-        $atto->redirect('/blog', null, false);
+        $atto
+            ->locale('nl-nl')
+            ->translation(__DIR__ . '/translations/*.php')
+            ->route('home', '/', null, function () {
+                /** @var AttoPHPInterface $this */
+                $this->redirect('/blog/{page}/2', null, null, false);
+            })
+            ->run('/', 'GET');
 
-        $this->assertContains('Location: /blog', xdebug_get_headers());
+        $this->assertContains('Location: /blog/pagina/2', xdebug_get_headers());
     }
 
     /**
