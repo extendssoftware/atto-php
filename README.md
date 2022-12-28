@@ -58,7 +58,7 @@ PHP, you will come to an end.
 
 ## 2. Requirements
 
-- PHP ^7.4 || ^8.0
+- PHP ^8.1
 - [URL rewriting](https://en.wikipedia.org/wiki/Rewrite_engine)
 
 ## 3. Installation
