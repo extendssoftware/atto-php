@@ -1,10 +1,10 @@
 # AttoPHP
 
+[![Latest Stable Version](http://poser.pugx.org/extendssoftware/atto-php/v)](https://packagist.org/packages/extendssoftware/atto-php)
+[![Total Downloads](http://poser.pugx.org/extendssoftware/atto-php/downloads)](https://packagist.org/packages/extendssoftware/atto-php)
+[![Latest Unstable Version](http://poser.pugx.org/extendssoftware/atto-php/v/unstable)](https://packagist.org/packages/extendssoftware/atto-php)
 [![License](http://poser.pugx.org/extendssoftware/atto-php/license)](https://packagist.org/packages/extendssoftware/atto-php)
 [![PHP Version Require](http://poser.pugx.org/extendssoftware/atto-php/require/php)](https://packagist.org/packages/extendssoftware/atto-php)
-[![Latest Stable Version](http://poser.pugx.org/extendssoftware/atto-php/v)](https://packagist.org/packages/extendssoftware/atto-php)
-[![Latest Unstable Version](http://poser.pugx.org/extendssoftware/atto-php/v/unstable)](https://packagist.org/packages/extendssoftware/atto-php)
-[![Total Downloads](http://poser.pugx.org/extendssoftware/atto-php/downloads)](https://packagist.org/packages/extendssoftware/atto-php)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/extendssoftware/atto-php/build.yml?branch=main)](https://github.com/extendssoftware/atto-php/blob/main/.github/workflows/build.yml)
 
 AttoPHP is a tool based on the [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to configure, route and
@@ -17,7 +17,7 @@ render a website with ease.
 - [5. Usage](#5-usage)
     - [5.1 Routes](#51-routes)
         - [5.1.1 Name](#511-name)
-        - [5.1.2 Pattern match and assemble](#512-pattern-match-and-assemble)
+        - [5.1.2 Pattern match and assemble](#512-pattern--match-and-assemble-)
         - [5.1.3 Constraints and HTTP methods](#513-constraints-and-http-methods)
         - [5.1.4 View and callback](#514-view-and-callback)
         - [5.1.5 Examples](#515-examples)
