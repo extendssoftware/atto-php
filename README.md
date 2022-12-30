@@ -48,10 +48,6 @@ There are lots of other solutions out there, like [Slim Framework](https://githu
 [bramus/router](https://github.com/bramus/router), [Twig](https://github.com/twigphp/Twig) and many others. Each with
 their own specialties, dependencies and all recommend installing with Composer.
 
-What if you want a simple website, fast but with nice SEO URLs and PHP templating without the skills of a programmer?
-AttoPHP can be the right choice for you. Small, no dependencies and available in a single file without a namespace to
-use easily over FTP.
-
 AttoPHP is not as comprehensive as the others, but it is fast and simple to use. Once you understand some core
 principles, you are good to go. Some very basic PHP knowledge is preferred, but if you can read and modify some simple
 PHP, you will come to an end.
