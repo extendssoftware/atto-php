@@ -273,9 +273,8 @@ Command with optional parameter limit. Command will match ```process queue``` an
 generate word cloud <id> latest [<limit>]
 ```
 
-Command with mixed static words, required parameters and optional parameter. Command will
-match ```generate word cloud 8 latest 10``` and  ```generate word cloud 8 latest```, but
-not  ```generate word cloud 8```.
+Command with mixed static words, required parameters and optional parameter. Command will match
+```generate word cloud 8 latest 10``` and ```generate word cloud 8 latest```, but not ```generate word cloud 8```.
 
 ### 5.3 Templates and scripts
 
@@ -364,14 +363,14 @@ This callback is called when an error occurs. The occurred error is available as
 ### 5.6 Config
 
 When a config path pattern is set with the ```config``` method files will be loaded before the start callback is called.
-The PHP method ```glob()``` is being used for loading the config files and the flag ``` GLOB_BRACE``` is given. Config
+The PHP method ```glob()``` is being used for loading the config files and the flag ```GLOB_BRACE``` is given. Config
 files must be PHP files, return an array and are loaded using ```require```. Directories are ignored and files are
 merged non-recursive.
 
 ### 5.7 Translation
 
 When a translation path pattern is set with the ```translation``` method, files will be loaded before the start callback
-is called. The PHP method ```glob()``` is being used for loading the config files and the flag ``` GLOB_BRACE``` is
+is called. The PHP method ```glob()``` is being used for loading the config files and the flag ```GLOB_BRACE``` is
 given. Translation files must be PHP files, return an array and are loaded using ```require```. Directories are ignored.
 The filename without the extension will be used as the locale for the loaded file, ```nl-nl.php``` will get the
 locale ```nl-nl```.
